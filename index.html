@@ -1,0 +1,255 @@
+<html>
+<head>
+  <title>Kalkulator</title>
+  <style>
+  table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+td {
+  width: 70px;
+  height: 50px;
+}
+
+.screen1 {
+  width: 100%;
+  height: 100%;
+  text-align: right;
+  font-size: 16px;
+}
+
+.screen2 {
+  width: 100%;
+  height: 100%;
+  text-align: right;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  height: 100%;
+  font-weight: bold;
+}
+
+textarea {
+  width: 100%;
+  height: 100%;
+}
+
+</style>
+</head>
+<body>
+<center>
+<table>
+  <tr>
+    <td colspan="5" ><input type="text" class="screen1" name="screen1" ></td>
+    <td rowspan="6" style="width: 300px; text-align: right;"><textarea id="myTextarea"></textarea></td>
+  </tr>
+  <tr>
+    <td colspan="5"><input type="text" class="screen2" name="screen2" readonly></td>
+  </tr>
+  <tr>
+    <td><button data-value="1"> 1 </button></td>
+    <td><button data-value="2"> 2 </button></td>
+    <td><button data-value="3"> 3 </button></td>
+    <td><button data-value="del"> Backspace </button></td>
+    <td><button data-value="speak"> Speak </button></td>
+  </tr>
+  <tr>
+    <td><button data-value="4"> 4 </button></td>
+    <td><button data-value="5"> 5 </button></td>
+    <td><button data-value="6"> 6 </button></td>
+    <td rowspan="1"><button data-value="+"> + </button></td>
+    <td rowspan="1"><button data-value="-"> - </button></td>
+  </tr>
+  <tr>
+    <td><button data-value="7"> 7 </button></td>
+    <td><button data-value="8"> 8 </button></td>
+    <td><button data-value="9"> 9 </button></td>
+    <td><button data-value="x"> x </button></td>
+    <td><button data-value="/"> / </button></td>
+  </tr>
+  <tr>
+    <td><button data-value=","> , </button></td>
+    <td><button data-value="0"> 0 </button></td>
+    <td><button data-value="CE"> CE </button></td>
+    <td colspan="2"><button data-value="="> Proses </button></td>
+  </tr>
+</table>
+</center>
+<!-- Jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="js/terbilang.js"></script>
+<script src='https://code.responsivevoice.org/responsivevoice.js'></script>
+<!-- Main JS -->
+<script>
+//==========================
+// Initsialisai Variabel
+//==========================
+localStorage.clear();
+
+//==========================
+//END Initsialisai Variabel
+//==========================
+
+
+//==========================
+//==========  Function Lists
+//==========================
+
+//Fungsi tambah
+function tambah(a , b){
+  return a + b;
+}
+
+//Fungsi kali
+function kali(a, b){
+  return a * b;
+}
+
+//function bahagi
+function bahagi(a, b){
+  return a / b;
+}
+
+//function kurang
+function kurang(a, b){
+  return a - b;
+}
+
+function proses(){
+  var result;
+  var stringResult = '';
+  if(localStorage.getItem('proses') == 'tambah'){
+    console.log('Proses tambah dimulai');
+    result = tambah(parseInt(localStorage.getItem('nilai1')), parseInt(localStorage.getItem('nilai2')));
+    $('.screen1').val(result);
+    $('.screen2').val(terbilang(result));
+    stringResult = localStorage.getItem('nilai1') + ' + ' + localStorage.getItem('nilai2') + ' = '+ result;
+  }
+  if(localStorage.getItem('proses') == 'kurang'){
+    console.log('Proses tambah dimulai');
+    result = kurang(parseInt(localStorage.getItem('nilai1')), parseInt(localStorage.getItem('nilai2')));
+    $('.screen1').val(result);
+    $('.screen2').val(terbilang(result));
+    stringResult = localStorage.getItem('nilai1') + ' - ' + localStorage.getItem('nilai2') + ' = '+ result;
+  }
+  if(localStorage.getItem('proses') == 'kali'){
+    console.log('Proses tambah dimulai');
+    result = kali(parseInt(localStorage.getItem('nilai1')), parseInt(localStorage.getItem('nilai2')));
+    $('.screen1').val(result);
+    $('.screen2').val(terbilang(result));
+    stringResult = localStorage.getItem('nilai1') + ' x ' + localStorage.getItem('nilai2') + ' = '+ result;
+  }
+  if(localStorage.getItem('proses') == 'bahagi'){
+    console.log('Proses tambah dimulai');
+    result = bahagi(parseInt(localStorage.getItem('nilai1')), parseInt(localStorage.getItem('nilai2')));
+    $('.screen1').val(result);
+    $('.screen2').val(terbilang(result));
+    stringResult = localStorage.getItem('nilai1') + ' / ' + localStorage.getItem('nilai2') + ' = '+ result;
+  }
+  var myTextArea = $('#myTextarea');
+  myTextArea.val(myTextArea.val() + '\n' + stringResult);
+  localStorage.clear();
+  localStorage.setItem('first', 'ada');
+}
+
+//==========================
+//======= END Function Lists
+//==========================
+
+
+
+//===========================
+//===== JQuery Document Ready
+//===========================
+$(document).ready(function() {
+  $('button').on('click', function(){
+    var value = $(this).data('value');
+    console.log('Value click is '+ value);
+    if(value == '=' || value == "speak" || value== "-" || value== "CE" ||  value== "del" || value== "+" || value== "x" || value== "/"){
+      if(value ==  'del'){
+        var stringInput = $('.screen1').val();
+        stringInput = stringInput.slice(0, -1);
+        $('.screen1').val(stringInput);
+      }
+      if(value == 'CE'){
+        console.log('CLEAR');
+        localStorage.clear();
+        $('.screen1').val('');
+        $('.screen2').val('');
+      }
+      if(value == '+'){
+        if(localStorage.getItem('proses') == null){
+          localStorage.setItem('proses', 'tambah');
+          localStorage.setItem('first', 'ada');
+          localStorage.setItem('nilai1', $('.screen1').val());
+          console.log('Fungsi tambah telah tertekan');
+        }else{
+          localStorage.setItem('nilai2', $('.screen1').val());
+          proses();
+        }
+      }
+      if(value == '-'){
+        if(localStorage.getItem('proses') == null){
+          localStorage.setItem('proses', 'kurang');
+          localStorage.setItem('first', 'ada');
+          localStorage.setItem('nilai1', $('.screen1').val());
+          console.log('Fungsi kurang telah tertekan');
+        }else{
+          localStorage.setItem('nilai2', $('.screen1').val());
+          proses();
+        }
+      }
+      if(value == 'x'){
+        if(localStorage.getItem('proses') == null){
+          localStorage.setItem('proses', 'kali');
+          localStorage.setItem('first', 'ada');
+          localStorage.setItem('nilai1', $('.screen1').val());
+          console.log('Fungsi kali telah tertekan');
+        }else{
+          localStorage.setItem('nilai2', $('.screen1').val());
+          proses();
+        }
+      }
+      if(value == 'speak'){
+        responsiveVoice.speak($('.screen2').val(),  "Indonesian Female");
+      }
+      if(value == '/'){
+        if(localStorage.getItem('proses') == null){
+          localStorage.setItem('proses', 'bahagi');
+          localStorage.setItem('first', 'ada');
+          localStorage.setItem('nilai1', $('.screen1').val());
+          console.log('Fungsi bahagi telah tertekan');
+        }else{
+          localStorage.setItem('nilai2', $('.screen1').val());
+          proses();
+        }
+      }
+      if(value == '='){
+        localStorage.setItem('nilai2', $('.screen1').val());
+        proses();
+      }
+    }else{
+      if(localStorage.getItem('first') == 'ada'){
+        console.log('first');
+        $('.screen1').val(value);
+        localStorage.removeItem('first');
+      }else{
+        var stringInput = $('.screen1').val();
+        stringInput = stringInput.toString() + value.toString();
+        $('.screen1').val(stringInput);
+      }
+    }
+  });
+});
+//===========================
+//= END JQuery Document Ready
+//===========================
+</script>
+</body>
+</html>
